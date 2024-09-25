@@ -33,6 +33,9 @@ data_2022 <- filter(datastore_resources, row_number() == 3) %>% get_resource()
 data_2023 <- filter(datastore_resources, row_number() == 2) %>% get_resource()
 data_2024 <- filter(datastore_resources, row_number() == 1) %>% get_resource()
 
+# Remove the "T00:00:00" part from the OCCUPANCY_DATE column in data_2023 using base R
+data_2023$OCCUPANCY_DATE <- sub("T.*", "", data_2023$OCCUPANCY_DATE)
+
 # Combine the datasets
 combined_data <- bind_rows(data_2021, data_2022, data_2023, data_2024)
 combined_data
