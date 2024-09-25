@@ -1,8 +1,8 @@
 ---
 #### Preamble ####
-# Purpose: Download and save the shelter flow data from Toronto Opendata
+# Purpose: Download and save the shelter data from Toronto Opendata
 # Author: Yiyi Feng
-# Date: 16th April 2024
+# Date: 25th September 2024
 # Contact: yiyi.feng@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: none. 
@@ -17,21 +17,29 @@ library(readr)
 #### Download data ####
 
 # get package for shelter system from Toronto Opendata
-package <- show_package("ac77f532-f18b-427c-905c-4ae87ce69c93")
+package <- show_package("21c83b32-d5a8-4106-a54f-010dbe49f6f2")
 head(package)
 
 # get all resources for this package
-resources <- list_package_resources("ac77f532-f18b-427c-905c-4ae87ce69c93")
-head(resources)#show the first six lines of package for checking
+resources <- resources <- list_package_resources("21c83b32-d5a8-4106-a54f-010dbe49f6f2")
+resources#show the first six lines of package for checking
 
-# load the first datastore resource as a sample
-raw_data_homeless <- filter(resources, row_number()==1) %>% get_resource()
-raw_data_homeless#show the whole raw data for checking
+# identify datastore resources; by default, Toronto Open Data sets datastore resource format to CSV for non-geospatial and GeoJSON for geospatial resources
+datastore_resources <- filter(resources, tolower(format) %in% c('csv', 'geojson'))
 
+# Load both datasets (2021, 2022, 2023 and 2024)
+data_2021 <- filter(datastore_resources, row_number() == 4) %>% get_resource()
+data_2022 <- filter(datastore_resources, row_number() == 3) %>% get_resource()
+data_2023 <- filter(datastore_resources, row_number() == 2) %>% get_resource()
+data_2024 <- filter(datastore_resources, row_number() == 1) %>% get_resource()
+
+# Combine the datasets
+combined_data <- bind_rows(data_2021, data_2022, data_2023, data_2024)
+combined_data
 
 #### Save data ####
 write_csv(
-  x = raw_data_homeless,
+  x = combined_data,
   file = "data/raw_data/raw_data_homeless.csv"
 )
 
