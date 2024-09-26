@@ -27,11 +27,11 @@ resources#show the first six lines of package for checking
 # identify datastore resources; by default, Toronto Open Data sets datastore resource format to CSV for non-geospatial and GeoJSON for geospatial resources
 datastore_resources <- filter(resources, tolower(format) %in% c('csv', 'geojson'))
 
-# Load both datasets (2021, 2022, 2023 and 2024)
-data_2021 <- filter(datastore_resources, row_number() == 4) %>% get_resource()
-data_2022 <- filter(datastore_resources, row_number() == 3) %>% get_resource()
-data_2023 <- filter(datastore_resources, row_number() == 2) %>% get_resource()
-data_2024 <- filter(datastore_resources, row_number() == 1) %>% get_resource()
+# Load both datasets (2021, 2022, 2023, and 2024)
+data_2021 <- filter(datastore_resources, row_number() == 7) %>% get_resource()
+data_2022 <- filter(datastore_resources, row_number() == 6) %>% get_resource()
+data_2023 <- filter(datastore_resources, row_number() == 8) %>% get_resource()
+data_2024 <- filter(datastore_resources, row_number() == 5) %>% get_resource()
 
 # Remove the "T00:00:00" part from the OCCUPANCY_DATE column in data_2023 using base R
 data_2023$OCCUPANCY_DATE <- sub("T.*", "", data_2023$OCCUPANCY_DATE)

@@ -19,6 +19,7 @@ library(dplyr)
 library(ggmap)
 library(tidygeocoder)
 library(purrr)
+
 #### Basic cleaning ####
 #import raw data
 raw_data_homeless <-
@@ -31,15 +32,14 @@ raw_data_homeless <-
 
 #remove useless cols from the dataset
 raw_data_homeless <- raw_data_homeless %>%
-  select(-`_id`, -ORGANIZATION_ID, -SHELTER_ID, -LOCATION_ID, -PROGRAM_ID)
+  select(-`X_id`, -ORGANIZATION_ID, -ORGANIZATION_NAME, -PROGRAM_NAME, -SHELTER_GROUP, -SHELTER_ID, -LOCATION_ID, -PROGRAM_ID)
 
-# Convert OCCUPANCY_DATE based on the year with adjusted format
-raw_data_homeless <- raw_data_homeless %>%
-  mutate(OCCUPANCY_DATE = case_when(
-    grepl("^21|^22", OCCUPANCY_DATE) ~ as.Date(OCCUPANCY_DATE, format = "%y-%m-%d"),  # Assuming this is correct for your dataset
-    grepl("^2023|^2024", OCCUPANCY_DATE) ~ as.Date(OCCUPANCY_DATE),  # Assuming these dates are already in proper format
-    TRUE ~ as.Date(NA)  # Handle any other cases
-  ))
+#### Save data ####
+write_csv(
+  x = raw_data_homeless,
+  file = "data/cleaned_data/cleaned_data.csv"
+)
+
 
 #### Clean needed data for figure 1 ####
 
@@ -73,9 +73,6 @@ summarized_data_figone <- summarized_data_figone %>%
   ungroup() %>%
   arrange(YEAR, LOCATION_ADDRESS)  # Arrange by YEAR first, then LOCATION_ADDRESS
 
-
-
-
 # Register Google API key 
 register_google(key = "AIzaSyCTiSeL3m1Wr7rjElHoKYoFlxQdexwKxQg")
 
@@ -107,6 +104,198 @@ write_csv(
   x = geocoded_data,
   file = "data/cleaned_data/cleaned_data_figone.csv"
 )
+
+
+#### Clean needed data for figure 2####
+
+#Select cols needed
+cleaned_data_figtwo <- raw_data_homeless %>%
+  select(OCCUPANCY_DATE, PROGRAM_MODEL, OVERNIGHT_SERVICE_TYPE, PROGRAM_AREA)
+
+# Remove rows with any NA values
+cleaned_data_figtwo <- cleaned_data_figtwo %>%
+  na.omit()
+
+# Add the year col and remove the old one
+cleaned_data_figtwo <- cleaned_data_figtwo %>%
+  mutate(YEAR = format(OCCUPANCY_DATE, "%Y"))
+cleaned_data_figtwo <- cleaned_data_figtwo %>%
+  select(-OCCUPANCY_DATE)
+
+# Add new columns with value 1
+cleaned_data_figtwo <- cleaned_data_figtwo %>%
+  mutate(
+    PROGRAM_MODEL_NUM = 1,  # Column with value 1
+    OVERNIGHT_TYPE_NUM = 1,  # Column with value 1
+    PROGRAM_AREA_NUM = 1  # Column with value 1
+  )
+
+# Reorder the columns
+cleaned_data_figtwo <- cleaned_data_figtwo %>%
+  select(YEAR, PROGRAM_MODEL, PROGRAM_MODEL_NUM, OVERNIGHT_SERVICE_TYPE, 
+         OVERNIGHT_TYPE_NUM, PROGRAM_AREA, PROGRAM_AREA_NUM)
+
+# Summarize the count of PROGRAM_MODEL_NUM by YEAR and PROGRAM_MODEL
+summary_program_model <- cleaned_data_figtwo %>%
+  group_by(YEAR, PROGRAM_MODEL) %>%
+  summarise(Total_PROGRAM_MODEL_NUM = sum(PROGRAM_MODEL_NUM))
+
+# Summarize the count of OVERNIGHT_TYPE_NUM by YEAR and OVERNIGHT_SERVICE_TYPE
+summary_overnight_type <- cleaned_data_figtwo %>%
+  group_by(YEAR, OVERNIGHT_SERVICE_TYPE) %>%
+  summarise(Total_OVERNIGHT_TYPE_NUM = sum(OVERNIGHT_TYPE_NUM))
+
+# Summarize the count of PROGRAM_MODEL_NUM by YEAR and PROGRAM_MODEL
+summary_program_area <- cleaned_data_figtwo %>%
+  group_by(YEAR, PROGRAM_AREA) %>%
+  summarise(Total_PROGRAM_AREA_NUM = sum(PROGRAM_AREA_NUM))
+
+#### Save data ####
+write_csv(
+  x = summary_program_model,
+  file = "data/cleaned_data/cleaned_data_figtwo_program_model.csv"
+)
+
+write_csv(
+  x = summary_overnight_type,
+  file = "data/cleaned_data/cleaned_data_figtwo_overnight_type.csv"
+)
+
+write_csv(
+  x = summary_program_area,
+  file = "data/cleaned_data/cleaned_data_figtwo_program_area.csv"
+)
+
+#### Clean needed data for figure 3 ####
+
+#Select cols needed
+cleaned_data_figthr <- raw_data_homeless %>%
+  select(OCCUPANCY_DATE, SECTOR, SERVICE_USER_COUNT)
+
+# Remove rows with any NA values
+cleaned_data_figthr <- cleaned_data_figthr %>%
+  na.omit()
+
+# Summarize the count of PROGRAM_MODEL_NUM by YEAR and PROGRAM_MODEL
+cleaned_data_figthr <- cleaned_data_figthr %>%
+  group_by(OCCUPANCY_DATE, SECTOR) %>%
+  summarise(Total_SECTOR_NUM = sum(SERVICE_USER_COUNT))
+
+# Create a new column for 4-month intervals
+summary_data_figthr <- cleaned_data_figthr %>%
+  mutate(
+    interval = case_when(
+      OCCUPANCY_DATE >= as.Date("2021-01-01") & OCCUPANCY_DATE <= as.Date("2021-04-30") ~ "2021-01 to 2021-04",
+      OCCUPANCY_DATE >= as.Date("2021-05-01") & OCCUPANCY_DATE <= as.Date("2021-08-31") ~ "2021-05 to 2021-08",
+      OCCUPANCY_DATE >= as.Date("2021-09-01") & OCCUPANCY_DATE <= as.Date("2021-12-31") ~ "2021-09 to 2021-12",
+      OCCUPANCY_DATE >= as.Date("2022-01-01") & OCCUPANCY_DATE <= as.Date("2022-04-30") ~ "2022-01 to 2022-04",
+      OCCUPANCY_DATE >= as.Date("2022-05-01") & OCCUPANCY_DATE <= as.Date("2022-08-31") ~ "2022-05 to 2022-08",
+      OCCUPANCY_DATE >= as.Date("2022-09-01") & OCCUPANCY_DATE <= as.Date("2022-12-31") ~ "2022-09 to 2022-12",
+      OCCUPANCY_DATE >= as.Date("2023-01-01") & OCCUPANCY_DATE <= as.Date("2023-04-30") ~ "2023-01 to 2023-04",
+      OCCUPANCY_DATE >= as.Date("2023-05-01") & OCCUPANCY_DATE <= as.Date("2023-08-31") ~ "2023-05 to 2023-08",
+      OCCUPANCY_DATE >= as.Date("2023-09-01") & OCCUPANCY_DATE <= as.Date("2023-12-31") ~ "2023-09 to 2023-12",
+      OCCUPANCY_DATE >= as.Date("2024-01-01") & OCCUPANCY_DATE <= as.Date("2024-04-30") ~ "2024-01 to 2024-04",
+      OCCUPANCY_DATE >= as.Date("2024-05-01") & OCCUPANCY_DATE <= as.Date("2024-08-28") ~ "2024-05 to 2024-08"
+    )
+  )
+
+# Summarize the total of Total_SECTOR_NUM by SECTOR and 4-month interval
+summary_data_figthr_new <- summary_data_figthr %>%
+  group_by(SECTOR, interval) %>%
+  summarise(Total_SECTOR_SUM = sum(Total_SECTOR_NUM, na.rm = TRUE))
+
+# Remove rows with NA values
+summary_data_figthr_new <- summary_data_figthr_new %>%
+  drop_na()
+
+#### Save data ####
+write_csv(
+  x = summary_data_figthr_new,
+  file = "data/cleaned_data/cleaned_data_figthr.csv"
+)
+
+#### Clean needed data for figure 4 ####
+
+#Select cols needed
+cleaned_data_figfou <- raw_data_homeless %>%
+  select(OCCUPANCY_DATE, CAPACITY_TYPE, CAPACITY_FUNDING_BED, OCCUPIED_BEDS, CAPACITY_FUNDING_ROOM, OCCUPIED_ROOMS)
+
+# Split into room and bed datasets
+room_data <- cleaned_data_figfou %>%
+  filter(CAPACITY_TYPE == "Room Based Capacity") %>%
+  select(-CAPACITY_FUNDING_BED, -OCCUPIED_BEDS)  # Remove bed-related columns
+
+bed_data <- cleaned_data_figfou %>%
+  filter(CAPACITY_TYPE == "Bed Based Capacity") %>%
+  select(-CAPACITY_FUNDING_ROOM, -OCCUPIED_ROOMS)  # Remove room-related columns
+
+# Create a new column for 4-month intervals
+summary_room_data <- room_data %>%
+  mutate(
+    interval = case_when(
+      OCCUPANCY_DATE >= as.Date("2021-01-01") & OCCUPANCY_DATE <= as.Date("2021-04-30") ~ "2021-01 to 2021-04",
+      OCCUPANCY_DATE >= as.Date("2021-05-01") & OCCUPANCY_DATE <= as.Date("2021-08-31") ~ "2021-05 to 2021-08",
+      OCCUPANCY_DATE >= as.Date("2021-09-01") & OCCUPANCY_DATE <= as.Date("2021-12-31") ~ "2021-09 to 2021-12",
+      OCCUPANCY_DATE >= as.Date("2022-01-01") & OCCUPANCY_DATE <= as.Date("2022-04-30") ~ "2022-01 to 2022-04",
+      OCCUPANCY_DATE >= as.Date("2022-05-01") & OCCUPANCY_DATE <= as.Date("2022-08-31") ~ "2022-05 to 2022-08",
+      OCCUPANCY_DATE >= as.Date("2022-09-01") & OCCUPANCY_DATE <= as.Date("2022-12-31") ~ "2022-09 to 2022-12",
+      OCCUPANCY_DATE >= as.Date("2023-01-01") & OCCUPANCY_DATE <= as.Date("2023-04-30") ~ "2023-01 to 2023-04",
+      OCCUPANCY_DATE >= as.Date("2023-05-01") & OCCUPANCY_DATE <= as.Date("2023-08-31") ~ "2023-05 to 2023-08",
+      OCCUPANCY_DATE >= as.Date("2023-09-01") & OCCUPANCY_DATE <= as.Date("2023-12-31") ~ "2023-09 to 2023-12",
+      OCCUPANCY_DATE >= as.Date("2024-01-01") & OCCUPANCY_DATE <= as.Date("2024-04-30") ~ "2024-01 to 2024-04",
+      OCCUPANCY_DATE >= as.Date("2024-05-01") & OCCUPANCY_DATE <= as.Date("2024-08-28") ~ "2024-05 to 2024-08"
+    )
+  )
+
+# Summarize the total of Total_SECTOR_NUM by SECTOR and 4-month interval
+summary_room_data_new <- summary_room_data %>%
+  group_by(interval) %>%
+  summarise(Total_FUNDING_ROOM = sum(CAPACITY_FUNDING_ROOM, na.rm = TRUE),
+            Total_OCCUPIED_ROOM = sum(OCCUPIED_ROOMS, na.rm = TRUE))
+
+# Remove rows with NA values
+summary_room_data_new <- summary_room_data_new %>%
+  drop_na()
+
+
+# Create a new column for 4-month intervals
+summary_bed_data <- bed_data %>%
+  mutate(
+    interval = case_when(
+      OCCUPANCY_DATE >= as.Date("2021-01-01") & OCCUPANCY_DATE <= as.Date("2021-04-30") ~ "2021-01 to 2021-04",
+      OCCUPANCY_DATE >= as.Date("2021-05-01") & OCCUPANCY_DATE <= as.Date("2021-08-31") ~ "2021-05 to 2021-08",
+      OCCUPANCY_DATE >= as.Date("2021-09-01") & OCCUPANCY_DATE <= as.Date("2021-12-31") ~ "2021-09 to 2021-12",
+      OCCUPANCY_DATE >= as.Date("2022-01-01") & OCCUPANCY_DATE <= as.Date("2022-04-30") ~ "2022-01 to 2022-04",
+      OCCUPANCY_DATE >= as.Date("2022-05-01") & OCCUPANCY_DATE <= as.Date("2022-08-31") ~ "2022-05 to 2022-08",
+      OCCUPANCY_DATE >= as.Date("2022-09-01") & OCCUPANCY_DATE <= as.Date("2022-12-31") ~ "2022-09 to 2022-12",
+      OCCUPANCY_DATE >= as.Date("2023-01-01") & OCCUPANCY_DATE <= as.Date("2023-04-30") ~ "2023-01 to 2023-04",
+      OCCUPANCY_DATE >= as.Date("2023-05-01") & OCCUPANCY_DATE <= as.Date("2023-08-31") ~ "2023-05 to 2023-08",
+      OCCUPANCY_DATE >= as.Date("2023-09-01") & OCCUPANCY_DATE <= as.Date("2023-12-31") ~ "2023-09 to 2023-12",
+      OCCUPANCY_DATE >= as.Date("2024-01-01") & OCCUPANCY_DATE <= as.Date("2024-04-30") ~ "2024-01 to 2024-04",
+      OCCUPANCY_DATE >= as.Date("2024-05-01") & OCCUPANCY_DATE <= as.Date("2024-08-28") ~ "2024-05 to 2024-08"
+    )
+  )
+
+# Summarize the total of Total_SECTOR_NUM by SECTOR and 4-month interval
+summary_bed_data_new <- summary_bed_data %>%
+  group_by(interval) %>%
+  summarise(Total_FUNDING_BED = sum(CAPACITY_FUNDING_BED, na.rm = TRUE),
+            Total_OCCUPIED_BED = sum(OCCUPIED_BEDS, na.rm = TRUE))
+
+# Remove rows with NA values
+summary_bed_data_new <- summary_bed_data_new %>%
+  drop_na()
+
+# Merging using dplyr
+merged_data <- full_join(summary_bed_data_new, summary_room_data_new, by = "interval")
+
+
+#### Save data ####
+write_csv(
+  x = merged_data,
+  file = "data/cleaned_data/cleaned_data_figfou.csv"
+)
+
 
 
 
