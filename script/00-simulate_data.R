@@ -1,8 +1,8 @@
 ---
 #### Preamble ####
-# Purpose: Simulate and generate a dataset for shelter dynamic information in
+# Purpose: Simulate and generate a dataset for mimicing the actual dataset
 # Author: Yiyi Feng
-# Date: 16th April 2024
+# Date: 25th September 2024
 # Contact: yiyi.feng@mail.utoronto.ca
 # Pre-requisites: no pre-requisites 
 # License: MIT
@@ -15,108 +15,118 @@ library(tidyverse)
 library(lubridate)
 
 # Set a seed to ensure reproducibility when simulating data
-set.seed(1)
+set.seed(7)
 
 # Simulate dates for the year 2018, with monthly intervals
-dates <- seq(ymd("2018-01-01"), ymd("2018-12-01"), by = "month")
+dates <- seq(ymd("2021-01-01"), ymd("2024-09-24"), by = "day")
 
-# Define population groups for simulated data
-population_groups <- c("All Population", "Chronic", "Refugees", "Families", "Youth", 
-                       "Single Adult", "Non-refugees", "Indigenous")
+# Create simulated data
+# Create a data frame with fixed values
+data_group <- data.frame(
+  LOCATION_ADDRESS = c("445 Rexdale Blvd", "14 Roncesvalles Ave", "850 Bloor St W", "1651 Sheppard Ave W", "3600 Steeles Ave W"),  # Fixed addresses
+  LOCATION_POSTAL_CODE = c("M9W 6P8", "M6R 2K3", "M6G 1M2", "M3M 2X4", "L4L 8P5"),  # Fixed postal codes
+  LOCATION_CITY = c("Etobicoke", "Toronto", "Toronto", "Toronto", "Vaughan"),  # Fixed cities
+  LOCATION_PROVINCE = c("ON", "ON", "ON", "ON", "ON"),  # Fixed provinces
+  PROGRAM_MODEL = c("Emergency", "Emergency", "Emergency", "Transitional", "Emergency"),  # Fixed program models
+  OVERNIGHT_SERVICE_TYPE = c("Motel/Hotel Shelter", "Motel/Hotel Shelter", "Shelter", "Shelter", "Motel/Hotel Shelter"),  # Fixed service types
+  PROGRAM_AREA = c("COVID-19 Response", "COVID-19 Response", "Base Shelter and Overnight Services System", "Base Shelter and Overnight Services System", "COVID-19 Response"),  # Fixed program areas
+  CAPACITY_TYPE = c("Room Based Capacity", "Room Based Capacity", "Bed Based Capacity", "Bed Based Capacity", "Room Based Capacity")  # Fixed capacity types
+)
 
-# Generate combinations of dates and population groups using map_df function
-date_population_combinations <- map_df(dates, ~ tibble(
-  date_mmm_yy = .x,
-  population_group = sample(population_groups, size = length(population_groups), replace = FALSE)
-))
+# Repeat data_group to cover 1500 rows
+data_group_repeated <- data_group[rep(1:nrow(data_group), length.out = 1500), ]
 
-# Simulate data for various parameters based on population groups and dates
-simulated_data <- date_population_combinations %>%
-  mutate(
-    returned_from_housing = sample(0:500, n(), replace = TRUE),  # Simulate individuals returning from housing
-    returned_to_shelter = sample(0:1000, n(), replace = TRUE),   # Simulate individuals returning to shelter
-    newly_identified = sample(0:2000, n(), replace = TRUE),       # Simulate newly identified homeless individuals
-    moved_to_housing = sample(0:1500, n(), replace = TRUE),       # Simulate individuals moving to housing
-    became_inactive = sample(0:2000, n(), replace = TRUE),        # Simulate individuals becoming inactive
-    ageunder16 = sample(0:5000, n(), replace = TRUE),             # Simulate age groups
-    age16_24 = sample(0:5000, n(), replace = TRUE),
-    age25_44 = sample(0:5000, n(), replace = TRUE),
-    age45_64 = sample(0:5000, n(), replace = TRUE),
-    age65over = sample(0:5000, n(), replace = TRUE),
-    gender_male = sample(0:10000, n(), replace = TRUE),           # Simulate gender distribution
-    gender_female = sample(0:10000, n(), replace = TRUE),
-    gender_transgender_non_binary_or_two_spirit = sample(0:500, n(), replace = TRUE)
-  ) %>%
-  group_by(date_mmm_yy) %>%
-  mutate(
-    actively_homeless = sample(1:15000, n(), replace = TRUE)  # Simulate actively homeless individuals
-  ) %>%
-  ungroup() %>%
-  arrange(date_mmm_yy, population_group) %>%
-  mutate(id = row_number()) %>%
-  select(id, everything())  # Ensure id is the first column
+# Randomize the order of the repeated rows
+data_group_repeated <- data_group_repeated[sample(1:nrow(data_group_repeated)), ]
 
-# Move actively_homeless column to the 9th position
-simulated_data <- simulated_data %>%
-  select(id, date_mmm_yy, population_group, everything(), actively_homeless) %>%
-  relocate(actively_homeless, .after = became_inactive)
+# Repeat the dates enough to cover at least 1500 rows
+repeat_times <- ceiling(1500 / length(dates))  # Calculate how many times to repeat
+occupancy_dates <- rep(dates, times = repeat_times)  # Repeat dates
 
-# Correct calculation for population_group_percentage
-simulated_data <- simulated_data %>%
-  mutate(
-    population_group_percentage = if_else(
-      population_group == "All Population",
-      "100%",
-      sprintf("%.2f%%", actively_homeless / max(actively_homeless) * 100)
-    )
-  )
+# Trim to exactly 1500 rows and sort the dates in chronological order
+occupancy_dates <- occupancy_dates[1:1500]
 
-# Write simulated data to a CSV file for further analysis
-write_csv(simulated_data, "data/simulated_data/simulated_homeless_data.csv")
+# Create the dataset
+new_dataset <- data.frame(OCCUPANCY_DATE = occupancy_dates)
 
-#### Generate data for number of people infected COVID####
-# Set the seed for reproducibility
-set.seed(2)
+# Shuffle the repeated rows randomly
+data_group_repeated <- data_group_repeated[sample(1:nrow(data_group_repeated)), ]
 
-# Define the years and months
-years <- 2020:2024
-months <- month.abb
+# Combine with the new_dataset
+sum_dataset <- cbind(new_dataset, data_group_repeated)
 
-# Create an empty matrix to store the simulated data
-simulated_data <- matrix(NA, nrow = length(years), ncol = length(months) + 1)
+# Define the possible sectors
+sectors <- c("Families", "Mixed Adult", "Men", "Women", "Youth")
 
-# Set the column names
-colnames(simulated_data) <- c("Year", months)
+# Add SECTOR column with random selection from sectors
+sum_dataset$SECTOR <- sample(sectors, nrow(sum_dataset), replace = TRUE)
 
-# Fill in the years
-simulated_data[, "Year"] <- years
+# Generate SERVICE_USER_COUNT with a skew towards numbers under 100
+# Using a custom distribution where values under 100 are more frequent
+service_user_count <- c(sample(0:99, size = 1200, replace = TRUE), 
+                        sample(100:300, size = 300, replace = TRUE))  # Skewed distribution
 
-# Simulate the number of people infected by COVID-19
-for (i in 1:length(years)) {
-  for (j in 1:length(months)) {
-    if (years[i] < 2024 | (years[i] == 2024 & j <= 2)) {
-      if (years[i] %in% c(2021, 2022)) {
-        simulated_data[i, j + 1] <- round(abs(rnorm(1, mean = 8000, sd = 2000)), 0)  # Higher mean for 2021 and 2022
-      } else {
-        simulated_data[i, j + 1] <- round(abs(rnorm(1, mean = 3000, sd = 1000)), 0)  # Lower mean for other years
-      }
-    } else {
-      simulated_data[i, j + 1] <- NA
-    }
+# Shuffle the SERVICE_USER_COUNT to randomize the order
+service_user_count <- sample(service_user_count)
+
+# Add SERVICE_USER_COUNT column to sum_dataset
+sum_dataset$SERVICE_USER_COUNT <- service_user_count[1:nrow(sum_dataset)]
+
+
+# Initialize the new columns with NA
+sum_dataset$CAPACITY_ACTUAL_BED <- NA
+sum_dataset$CAPACITY_FUNDING_BED <- NA
+sum_dataset$OCCUPIED_BEDS <- NA
+sum_dataset$CAPACITY_ACTUAL_ROOM <- NA
+sum_dataset$CAPACITY_FUNDING_ROOM <- NA
+sum_dataset$OCCUPIED_ROOMS <- NA
+
+# Loop through each row and assign values based on CAPACITY_TYPE
+for (i in 1:nrow(sum_dataset)) {
+  if (sum_dataset$CAPACITY_TYPE[i] == "Room Based Capacity") {
+    # Generate values for room-based columns
+    occupied_rooms <- sample(0:48, 1)
+    capacity_actual_room <- sample(occupied_rooms:49, 1)  # Actual must be >= occupied
+    capacity_funding_room <- sample(capacity_actual_room:50, 1)  # Funding must be >= actual
+    
+    sum_dataset$CAPACITY_ACTUAL_ROOM[i] <- capacity_actual_room
+    sum_dataset$CAPACITY_FUNDING_ROOM[i] <- capacity_funding_room
+    sum_dataset$OCCUPIED_ROOMS[i] <- occupied_rooms
+    
+  } else if (sum_dataset$CAPACITY_TYPE[i] == "Bed Based Capacity") {
+    # Generate values for bed-based columns
+    occupied_beds <- sample(0:48, 1)
+    capacity_actual_bed <- sample(occupied_beds:49, 1)  # Actual must be >= occupied
+    capacity_funding_bed <- sample(capacity_actual_bed:50, 1)  # Funding must be >= actual
+    
+    sum_dataset$CAPACITY_ACTUAL_BED[i] <- capacity_actual_bed
+    sum_dataset$CAPACITY_FUNDING_BED[i] <- capacity_funding_bed
+    sum_dataset$OCCUPIED_BEDS[i] <- occupied_beds
   }
 }
 
-# Set row names as sequential numbers
-rownames(simulated_data) <- 1:nrow(simulated_data)
+# Calculate UNOCCUPIED_BEDS and UNAVAILABLE_BEDS for Bed Based Capacity
+sum_dataset$UNOCCUPIED_BEDS <- sum_dataset$CAPACITY_ACTUAL_BED - sum_dataset$OCCUPIED_BEDS
+sum_dataset$UNAVAILABLE_BEDS <- sum_dataset$CAPACITY_FUNDING_BED - sum_dataset$CAPACITY_ACTUAL_BED
 
-# Print the simulated data
-print(simulated_data)
+# Calculate UNOCCUPIED_ROOMS and UNAVAILABLE_ROOMS for Room Based Capacity
+sum_dataset$UNOCCUPIED_ROOMS <- sum_dataset$CAPACITY_ACTUAL_ROOM - sum_dataset$OCCUPIED_ROOMS
+sum_dataset$UNAVAILABLE_ROOMS <- sum_dataset$CAPACITY_FUNDING_ROOM - sum_dataset$CAPACITY_ACTUAL_ROOM
 
-# Convert simulated_data to a data frame if it's not already one
-if (!is.data.frame(simulated_data)) {
-  simulated_data <- as.data.frame(simulated_data)
-}
+# Calculate OCCUPANCY_RATE_BEDS and handle division by zero
+sum_dataset$OCCUPANCY_RATE_BEDS <- ifelse(
+  sum_dataset$CAPACITY_ACTUAL_BED > 0, 
+  sum_dataset$OCCUPIED_BEDS / sum_dataset$CAPACITY_ACTUAL_BED, 
+  NA
+)
+
+# Calculate OCCUPANCY_RATE_ROOMS and handle division by zero
+sum_dataset$OCCUPANCY_RATE_ROOMS <- ifelse(
+  sum_dataset$CAPACITY_ACTUAL_ROOM > 0, 
+  sum_dataset$OCCUPIED_ROOMS / sum_dataset$CAPACITY_ACTUAL_ROOM, 
+  NA
+)
 
 # Write simulated data to a CSV file for further analysis
-write.csv(simulated_data, "data/simulated_data/simulated_covid_data.csv", row.names = TRUE)
+write.csv(sum_dataset, "data/simulated_data/simulated_data.csv", row.names = TRUE)
 

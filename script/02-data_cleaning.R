@@ -32,14 +32,13 @@ raw_data_homeless <-
 
 #remove useless cols from the dataset
 raw_data_homeless <- raw_data_homeless %>%
-  select(-`X_id`, -ORGANIZATION_ID, -ORGANIZATION_NAME, -PROGRAM_NAME, -SHELTER_GROUP, -SHELTER_ID, -LOCATION_ID, -PROGRAM_ID)
+  select(-`X_id`, -ORGANIZATION_ID, -ORGANIZATION_NAME, -PROGRAM_NAME, -LOCATION_NAME, -SHELTER_GROUP, -SHELTER_ID, -LOCATION_ID, -PROGRAM_ID)
 
 #### Save data ####
 write_csv(
   x = raw_data_homeless,
   file = "data/cleaned_data/cleaned_data.csv"
 )
-
 
 #### Clean needed data for figure 1 ####
 

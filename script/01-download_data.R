@@ -40,6 +40,9 @@ data_2023$OCCUPANCY_DATE <- sub("T.*", "", data_2023$OCCUPANCY_DATE)
 combined_data <- bind_rows(data_2021, data_2022, data_2023, data_2024)
 combined_data
 
+
+
+
 #### Save data ####
 write_csv(
   x = combined_data,
