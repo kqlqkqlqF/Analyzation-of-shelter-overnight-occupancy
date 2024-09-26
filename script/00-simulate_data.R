@@ -127,6 +127,9 @@ sum_dataset$OCCUPANCY_RATE_ROOMS <- ifelse(
   NA
 )
 
+# Reset the row names to be sequential
+rownames(sum_dataset) <- NULL
+
 # Write simulated data to a CSV file for further analysis
 write.csv(sum_dataset, "data/simulated_data/simulated_data.csv", row.names = TRUE)
 

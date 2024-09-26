@@ -34,6 +34,28 @@ raw_data_homeless <-
 raw_data_homeless <- raw_data_homeless %>%
   select(-`X_id`, -ORGANIZATION_ID, -ORGANIZATION_NAME, -PROGRAM_NAME, -LOCATION_NAME, -SHELTER_GROUP, -SHELTER_ID, -LOCATION_ID, -PROGRAM_ID)
 
+raw_data_homeless$OCCUPANCY_DATE <- as.Date(raw_data_homeless$OCCUPANCY_DATE, format = "%Y/%m/%d")
+
+# Remove rows with negative values in specified columns
+raw_data_homeless <- raw_data_homeless %>%
+  filter(
+    (is.na(UNOCCUPIED_ROOMS) | UNOCCUPIED_ROOMS >= 0) &
+      (is.na(UNAVAILABLE_ROOMS) | UNAVAILABLE_ROOMS >= 0) &
+      (is.na(UNOCCUPIED_BEDS) | UNOCCUPIED_BEDS >= 0) &
+      (is.na(UNAVAILABLE_BEDS) | UNAVAILABLE_BEDS >= 0)
+  )
+
+# Update occupancy rates in raw_data_homeless
+raw_data_homeless <- raw_data_homeless %>%
+  mutate(
+    OCCUPANCY_RATE_BEDS = ifelse(CAPACITY_TYPE == "Bed Based Capacity", 
+                                 round(OCCUPIED_BEDS / CAPACITY_ACTUAL_BED, 2), 
+                                 OCCUPANCY_RATE_BEDS),
+    OCCUPANCY_RATE_ROOMS = ifelse(CAPACITY_TYPE == "Room Based Capacity", 
+                                  round(OCCUPIED_ROOMS / CAPACITY_ACTUAL_ROOM, 2), 
+                                  OCCUPANCY_RATE_ROOMS)
+  )
+
 #### Save data ####
 write_csv(
   x = raw_data_homeless,
