@@ -10,7 +10,7 @@ This paper was finished in Rstudio, which focus on investigating the 4 aspects o
 
 - File `paper` contain the bibliography of the paper `references11.bib`, and the qmd file and PDF file for the paper.
 
-- File `other` contains materials that are not belongs to the upper categories. It includes:
+- File `other` contains materials that are not belongs to the upper categories. Literatures were not included since there's no literature for this article.
 
   - `sketches` contains sketches pictures, which show a general idea of what the graph and data should be like. you can find it in the "sketches" folder under `inputs`.
 
