@@ -239,16 +239,16 @@ write_csv(
 
 #Select cols needed
 cleaned_data_figfou <- raw_data_homeless %>%
-  select(OCCUPANCY_DATE, CAPACITY_TYPE, CAPACITY_FUNDING_BED, OCCUPIED_BEDS, CAPACITY_FUNDING_ROOM, OCCUPIED_ROOMS)
+  select(OCCUPANCY_DATE, CAPACITY_TYPE, CAPACITY_FUNDING_BED, CAPACITY_ACTUAL_BED, OCCUPIED_BEDS, CAPACITY_FUNDING_ROOM, CAPACITY_ACTUAL_ROOM, OCCUPIED_ROOMS)
 
 # Split into room and bed datasets
 room_data <- cleaned_data_figfou %>%
   filter(CAPACITY_TYPE == "Room Based Capacity") %>%
-  select(-CAPACITY_FUNDING_BED, -OCCUPIED_BEDS)  # Remove bed-related columns
+  select(-CAPACITY_FUNDING_BED, -OCCUPIED_BEDS, -CAPACITY_FUNDING_BED)  # Remove bed-related columns
 
 bed_data <- cleaned_data_figfou %>%
   filter(CAPACITY_TYPE == "Bed Based Capacity") %>%
-  select(-CAPACITY_FUNDING_ROOM, -OCCUPIED_ROOMS)  # Remove room-related columns
+  select(-CAPACITY_FUNDING_ROOM, -OCCUPIED_ROOMS, -CAPACITY_FUNDING_ROOM)  # Remove room-related columns
 
 # Create a new column for 4-month intervals
 summary_room_data <- room_data %>%
@@ -272,7 +272,8 @@ summary_room_data <- room_data %>%
 summary_room_data_new <- summary_room_data %>%
   group_by(interval) %>%
   summarise(Total_FUNDING_ROOM = sum(CAPACITY_FUNDING_ROOM, na.rm = TRUE),
-            Total_OCCUPIED_ROOM = sum(OCCUPIED_ROOMS, na.rm = TRUE))
+            Total_OCCUPIED_ROOM = sum(OCCUPIED_ROOMS, na.rm = TRUE),
+            Total_ACTUAL_ROOM = sum(CAPACITY_ACTUAL_ROOM, na.rm = TRUE))
 
 # Remove rows with NA values
 summary_room_data_new <- summary_room_data_new %>%
@@ -301,7 +302,8 @@ summary_bed_data <- bed_data %>%
 summary_bed_data_new <- summary_bed_data %>%
   group_by(interval) %>%
   summarise(Total_FUNDING_BED = sum(CAPACITY_FUNDING_BED, na.rm = TRUE),
-            Total_OCCUPIED_BED = sum(OCCUPIED_BEDS, na.rm = TRUE))
+            Total_OCCUPIED_BED = sum(OCCUPIED_BEDS, na.rm = TRUE),
+            Total_ACTUAL_BED = sum(CAPACITY_ACTUAL_BED, na.rm = TRUE))
 
 # Remove rows with NA values
 summary_bed_data_new <- summary_bed_data_new %>%

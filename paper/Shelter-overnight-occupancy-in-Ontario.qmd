@@ -1,5 +1,5 @@
 ---
-title: "Navigating Toronto's Homelessness Landscape during Pandemic: A Analysis of the dynamics for age group composition of Toronto Homeless community change with the Spread of Covid between 2020 and 2024"
+title: "Navigating Ontario's Shelter and Overnight Services: A Analysis of the Change in Distribution, Program Types, Composition of Users and Occupancy Situation between 2021 and 2024"
 author: 
   - Yiyi Feng
 date: today
@@ -71,20 +71,16 @@ cleaned_data_figfou <-
 ```
  
 # Introduction [^1]
+
+In recent years, due to the impact of COVID-19 and the influx of refugees, the number of homeless population in Toronto has continued to rise. These individuals are facing increasingly difficult challenges when seeking overnight shelter. Even for those who living in downtown Toronto, where shelters are most concentrated, encountering homeless individuals on the streets has become a common sight—shelters simply cannot accommodate more people. Official reports confirm this reality. As early as 2020, the General Manager of the city’s Shelter, Support, and Housing Administration publicly stated that an average of 72 people were turned away daily due to overcrowding, and this number has been steadily rising [@homelessinTor]. By the winter of 2022, the number of people denied shelter had surged to 168 per day [@cbcnews].
  
-Homeless individuals in Toronto have been facing serious challenges in accessing nighttime accommodation in recent years. As early as 2020, the general manager of the city's shelter, support, and housing administration openly stated that an average of 72 people were being turned away from shelters due to overcrowding every day, a number that only continued to rise [@homelessinTor]. By the winter of 2022, this figure had surged to 168 people [@cbcnews]. For residents living in Toronto, this reality is apparent - despite shelter occupancy rates exceeding 98% [@streetneed], a large number of individuals still resort to sleeping on the streets, a reality witnessed firsthand by residents and students alike.
- 
-The COVID-19 pandemic between 2020 and 2022 dealt a significant blow to many people's economic situations. As a result, the outbreak is widely believed to correlate positively with the overall count of homeless individuals; the more COVID-19 cases reported, the more severe the outbreak, and consequently, the higher the number of homeless people. But is this the case? By 2024, the number of COVID-19 infections has been steadily decreasing, making it more likely for us to derive more accurate analyses based on the data compared to when the pandemic first erupted. We aim not only to uncover the relationship between the overall homeless population in Toronto and the number of COVID-19 cases, but also to explore the correlation between the number of homeless individuals across different age groups within the homeless community. There are two main reasons for proposing this idea. Firstly, while the relationship between the total homeless population and the pandemic is known, we lack insights into the individual trends within the diverse homeless population. Secondly, COVID-19 has been shown to infect and lead to fatalities more easily in older adults and children with low immunity, thereby demonstrating differential infection rates across age groups. Therefore, we hope to find out its relationship with the homeless community across different age groups.
+This situation sparked our curiosity. We wanted to understand how the shelter system operates. For example, for those shelters outside of downtown Toronto, where are they located? Has the overall distribution of shelters changed significantly in recent years? What categories do shelters and overnight services fall into, and what are the proportions of each? Are Toronto’s shelters truly as overcrowded as described earlier? If so, have shelters added more beds to cope with the increasing demand? To address these questions, we turned to the "About Daily Shelter & Overnight Service Occupancy & Capacity" dataset available on OpendataToronto, hoping that by analyzing this dataset, we could find some answers.
 
-We started with deconstructing and analyzing the homeless population in Toronto to understand the trends within this community, including changes in total numbers and demographic composition. Utilizing data obtained from the open databases in Toronto, we examined the situation and demographic composition of the homeless population from 2018 to 2024, focusing on changes such as the number of homeless individuals transitioning between housing and shelter systems, the count of individuals utilizing the shelter system long-term, and demographic characteristics including gender, age, and status.
+Using this dataset, we first analyzed the distribution of shelters and overnight service programs in Toronto over the past few years, comparing how their locations have changed each year. Next, we examined the different Program Models, Service Types, and Program Areas of these shelters and services to better understand their classifications and proportions. We also looked into the composition of the individuals using these shelters and services to explore changes in the makeup of Toronto’s homeless population. Lastly, we investigated shifts in the total number of available beds and rooms, as well as their occupancy rates.
 
-To elucidate the relationship between the number of homeless individuals in different age groups and the quantity of COVID cases, we sourced another dataset from OpenData Toronto, provided by Toronto Public Health, detailing monthly counts of infectious disease cases. This dataset spans from the initial detection and formal recording of COVID-19 cases in January 2020 to the present, documenting the number of COVID-19 infections each month. In total, we developed six linear models, each corresponding to the overall homeless population and the populations of five different age groups of homeless individuals, to examine their relationships with the quantity of COVID-19 cases.
+From these analyses, we drew several conclusions. First, between 2021 and 2024, aside from a few locations being removed or relocated, the distribution of shelters and overnight service programs in Toronto remained largely unchanged. The majority of these shelters are classified as emergency programs, which do not require a referral for access. We also observed a clear response from the shelter system to meet current demands, such as the COVID-19 response program from 2021 to 2023 and the refugee program introduced in 2023 and 2024. Among those using these services, mixed adults make up the largest group, while youth represent the smallest. However, the overall number of users has been on the rise. Lastly, although the number of available beds has increased in recent years, shelters are indeed very crowded, with the number of available beds and rooms closely matching the number of occupied ones, confirming the earlier observations.
 
-Our analysis revealed two key findings. Firstly, our established linear models indicated a negative correlation between the overall homeless population in Toronto and the number of COVID-19 cases. However, different age groups of the homeless exhibited distinct correlation patterns, primarily manifested as a negative correlation for those under 45 years old and a positive correlation for those aged 45 and above. Additionally, according to the predictions of these models, as the spread of COVID-19 is effectively controlled in the future and cases decrease, there may be an increase in the proportion of younger individuals within the homeless population.
-
-To summary, in this study, we initially investigated the annual transitions of homeless individuals between housing, shelters, and other statuses within the shelter system in Toronto from 2018 to 2023. Subsequently, we analyzed the composition of the homeless population and trends in age and gender distribution among them. Finally, we fitted linear models between the overall homeless population and five different age groups of the homeless population with COVID-19 cases. We then analyzed the performance of these six linear regression models and made predictions for the future.
-
-Understanding the trends and dynamics of homelessness in Toronto is of paramount importance, given its implications for public policy and social welfare. By finding out the challenges faced by the Toronto shelter system, we aim to inform policymakers and stakeholders in their efforts to address homelessness in the city.
+To summarize, in this study, we analyzed the change in distribution, program types, composition of users and occupancy situation of Toronto shelter and overnight service program system between 2021 and 2024 to better understand their structure and proportions. It is important and valuable to understand the dynamics of shelter and overnight service program in Toronto. It highlights the challenges faced by Toronto’s social welfare system over different periods and the broader societal responses to these events, such as the proactive measures taken in response to COVID-19 and the influx of refugees.
  
 [^1]: Please check https://github.com/kqlqkqlqF/Analyzation-of-shelter-overnight-occupancy.git for more information.
 
@@ -92,26 +88,30 @@ Understanding the trends and dynamics of homelessness in Toronto is of paramount
 
 ## Data Source
 
-The data for this analysis was collected from the shared Toronto Open Database [@opendatatoronto]. This study utilizes and analyzes the dataset titled "About Toronto Shelter System Flow" and "About Monthly Communicable Disease Surveillance Data". The "About Toronto Shelter System Flow" dataset contains information on the transition of homeless individuals in Toronto shelters from January 2018 to March 2024, including gender, age, quantity, and population groups individuals belong to (such as refugees). Additionally, the dataset provides information on the number of people leaving and entering shelter systems. It is released by the Toronto Shelter, Support, and Housing Administration, updated monthly, and has a high level of credibility. The  "About Monthly Communicable Disease Surveillance Data" dataset contains several communicable disease cases reported each month from 2016 January to 2024 February in Toronto, while COVID-19 cases were included since 2020 January. Both of the datasets have received full marks for freshness, metadata, accessibility, completeness, and usability on the Opendatatoronto website. Also, the  "About Toronto Shelter System Flow" was provided by the Toronto Shelter and  Support Agency, while the "About Monthly Communicable Disease Surveillance Data" dataset was published by the Toronto Public Health Agency. Therefore, we consider the content of these datasets to be highly credible and utilize it as the primary data source for this paper. Since the occurrence of COVID-19 cases spans from January 2020 to February 2024, we excluded data on homeless individuals from other periods when constructing the models to maintain consistency in the analysis process, these parts of data remained in the other parts of this study, such as overall analyzation of homeless community composition in Toronto.
+The data for this analysis was collected from the shared Toronto Open Database [@opendatatoronto]. This study utilizes and analyzes the dataset titled "About Daily Shelter & Overnight Service Occupancy & Capacity". This data set provides a daily list of active overnight shelter and allied services in the Toronto Shelter and Support Services division's Shelter Management Information System (SMIS) database. It provides information on shelter occupancy and service provision in Toronto from January 2021 to August 2024. It includes details such as the unique identifiers for organizations and shelters, the dates of occupancy records, and the specific types of overnight services offered. The dataset categorizes shelter programs based on their operational models, including emergency and transitional shelters, and identifies the sectors they serve, such as adult men, women, mixed adults, youth, and families. Furthermore, it tracks the number of service users, bed and room capacities, and occupancy rates, enabling analysis of trends in shelter usage and responses to evolving needs, including those arising from the COVID-19 pandemic and the influx of refugees.
+
+The dataset, published by Toronto Shelter & Support Services, has been updated daily since January 1, 2021. As of the submission of this paper, the dataset includes data up to September 26, 2024. This dataset has received full marks for Freshness, Metadata, Accessibility, Completeness, and Usability on the Opendatatoronto website, leading us to consider it highly credible and use it as the primary data source for this study. Since the dataset does not yet cover all of September 2024, and in our analysis of "Composition of Users" and "Occupancy and Capacity," we divided the data into four-month intervals, the data included only extends up to August 31, 2024. However, for the "Distribution" and "Program Types" analyses, where we compare and segment data on a yearly basis, the updated data for September 2024 has been included.
 
 ## Features
 
-For the dataset of shelter system, upon entering shelters, individuals utilizing shelter services are required to provide their name, age, gender, and group affiliation, which are recorded in the database. This dataset only records homeless individuals using overnight shelter services and does not include those utilizing other welfare policies, such as receiving free food or vaccinations. In the data, homeless individuals are divided into five age groups: under 16, 16 to 24, 25 to 44, 45 to 64, and over 65. Gender is categorized as male, female, and transgender/non-binary/two-spirit. The population group includes chronic, refugees, families, youth, single adults, non-refugee, and indigenous. however, the indigenous group was only included in the statistics starting from January 2022, as the authors of the dataset stated their intention to collect more detailed data, hence adding the subdivision. Here, chronic refers to homeless individuals who have continuously used shelter services for more than 180 days. Regarding the documentation of homeless transitions, the dataset provides six subdivisions: newly identified, return from housing, return to shelter, moved to housing, became inactive, and actively homeless. Newly identified refers to people who entered the shelter system for the first time; returned from permanent housing refers to people who previously used the shelter system, then moved to permanent housing, and have now returned; returned to shelter refers to people who were previously using the shelter system, then did not use the system for 3 months or longer, and have now returned; moved to permanent housing refers to people who were using the shelter system and have moved to permanent housing; became Inactive refers to people who last accessed shelter services three months ago; actively homeless refers to people who have used shelter services at least one time in the past three months and have not moved to permanent housing. The data recording for COVID-19 cases is much simpler. The original dataset contained records of monthly reported numbers for various infectious diseases, including HIV, gonorrhea, and so on. We simply extracted the relevant records for COVID-19 from the original dataset and performed some basic formatting.
- 
+This dataset records the program model, overnight service type, and program area categories for each shelter, which include specific classifications relevant to the shelter system. First, the program model is divided into two types: Emergency, which can be accessed by any individual, and Transitional, which is only available to individuals with a referral. Next, the overnight service type is categorized based on the services provided, including Shelter, 24-Hour Respite, Motel/Hotel, Interim Housing, Warming Centre, 24-Hour Women's Drop-in, and Isolation/Recovery Site. It is important to note that the Isolation/Recovery Site was established specifically for homeless individuals infected with COVID-19 who require urgent isolation and medical services. Additionally, the 24-Hour Women's Drop-in not only accommodates homeless women but also supports transgender or gender-non-binary individuals. Lastly, the Program Area distinguishes whether a program belongs to a shelter, overnight service program, or temporary response program, with categories such as Base Shelter and Overnight Services System, Temporary Refugee Response, COVID-19 Response, and Winter Response.
+
+The dataset also introduces a classification of Bed-Based or Room-Based Capacity Types. Bed-based capacity typically applies to programs with shared sleeping areas, while room-based capacity is more common for family programs and hotel-based programs, where bedrooms are not shared by individuals from different households. This classification is designed to prevent over-reporting of capacity in room-based programs. For each capacity type, the dataset records five key figures: Capacity Actual, Capacity Funding, Occupied, Unoccupied, and Occupancy Rate. Capacity Actual refers to the number of spaces available as shown in the management system, while Capacity Funding represents the number of spaces that have been approved for funding in the program. Occupied indicates the number of spaces in use on a given day. Unoccupied is the difference between the capacity actual and the number of occupied spaces. Occupancy Rate is the result of dividing the number of occupied spaces by the capacity actual.
+
 ## Methodology
  
-The data analysis was conducted using R [@citeR], a versatile statistical programming language. We utilized a range of packages to enhance our analysis. The tidyverse [@tidy] suite of packages provided a comprehensive toolkit for efficient data manipulation and visualization. Package ggplot2 [@gg2] allowed us to create compelling visualization. The here [@here] package simplified file management within our project directory structure. Additionally, kableExtra [@kable] was employed to generate visually appealing and customizable tables, enhancing the presentation of our findings. For Bayesian analysis, we utilized the rstanarm [@rstanarm] package, which provided an elegant interface to Stan, a cutting-edge platform for statistical modeling and computation. This allowed us to estimate relationships within our data using a Bayesian framework, providing valuable insights into our research questions. Report generation was seamlessly managed using knitr [@knitr], enabling the integration of R code within our document.  Other essential packages included tibble [@tibble], stringr [@stringr], lubridate [@lubridate], janitor [@janitor], and testthat [@testthat], each contributing to various aspects of our data analysis process, from data manipulation to quality assurance.
+The data analysis was conducted using R [@citeR], a versatile statistical programming language. We utilized a range of packages to enhance our analysis. The tidyverse [@tidy] suite of packages provided a comprehensive toolkit for efficient data manipulation and visualization. Package ggplot2 [@gg2] allowed us to create compelling visualization. The here [@here] package simplified file management within our project directory structure. We also used ggmap [@ggmap] in combination with the Google API to generate a map showing the distribution of shelters in Toronto. Additionally, kableExtra [@kable] was employed to generate visually appealing and customizable tables, enhancing the presentation of our findings. For Bayesian analysis, we utilized the rstanarm [@rstanarm] package, which provided an elegant interface to Stan, a cutting-edge platform for statistical modeling and computation. This allowed us to estimate relationships within our data using a Bayesian framework, providing valuable insights into our research questions. Report generation was seamlessly managed using knitr [@knitr], enabling the integration of R code within our document.  Other essential packages included tibble [@tibble], stringr [@stringr], lubridate [@lubridate], janitor [@janitor], and testthat [@testthat], each contributing to various aspects of our data analysis process, from data manipulation to quality assurance.
 
-As mentioned before, the data cleaning process is simple for the COVID-19 dataset, so for here we will instoduce the data processing procedure for the homeless dataset. Due to the clarity of the data itself, our data cleaning process primarily focused on converting the raw data dates into the yyyy-mm-dd format and selecting the data needed for producing each figure respectively to ensure code was organized and minimize the amount of code in the final QMD file. For the first chart, intended to reveal Trends in the Annual Counts of Homeless Individuals Transitioning within the Toronto Shelter System between 2018 and 2023, we retained the data for the six transition status categories from monthly data and aggregated data within the same year for ease of subsequent chart generation. For the second chart, revealing Trends in the Composition of Homeless Population Groups and Age Distribution within the Toronto Shelter System between 2018 and 2023, we removed all data except for age and population groups. Similarly, for the third chart, Trends in Gender Composition of Homeless Population Across Different Population Groups within the Toronto Shelter System between 2018 and 2023, we retained only gender and group affiliation data. The linear model utilized the cleaned dataset for the second figure, and additional cleaning was performed to remove all data that did not belong to the period 2020 January to 2024 February.
+Due to the extensive variety of data classifications within this dataset, with a total of 32 features, the data cleaning process was quite challenging. To maintain an organized structure in the final QMD file that generates the PDF, we first cleaned the overall dataset and saved it as a CSV file. From this cleaned overall dataset, we then extracted and processed the necessary data for each figure separately, storing the results in individual CSV files.
 
 
 # Result
  
-## Trends in Homelessness Transitioning within the Toronto Shelter System
+## Distribution of Active Shelters and Overnight Service Programs in Toronto
  
 ```{r, fig.width=12, fig.height=10}
 #| label: fig-one
-#| fig-cap: Trends in the Annual Counts of Homeless Individuals Transitioning within the Toronto Shelter System between 2018 and 2023 
+#| fig-cap: Distribution of active shelters and overnight service programs in Toronto from 2021 to 2024 
 #| echo: false
 #| message: false
 #| warning: false
@@ -163,11 +163,11 @@ Lastly, individuals from the actively homeless category highlight the ongoing de
  
 In conclusion, these data paint a complex picture of homelessness within the Toronto shelter system, with a trend of increasing actively homeless individuals. 
  
-## Composition of Homeless Population Groups and Correcponding Age Distribution
+## Analysis of Program Models, Service Types and Program Areas for Active Shelters and Overnight Services
 
 ```{r, fig.width=17, fig.height=25}
 #| label: fig-two
-#| fig-cap: Composition of Homeless Population Groups and Age Distribution within the Toronto Shelter System between 2018 and 2023
+#| fig-cap: Analysis of Program Models, Service Types and Program Areas for Active Shelters and Overnight Services in Toronto from 2021 to 2024
 #| echo: false
 #| message: false
 
@@ -246,11 +246,11 @@ Thirdly, unlike refugees, homeless individuals categorized as non-refugees are m
  
 In summary, chronic individuals are prominent across age groups, highlighting challenges in securing permanent housing. Refugees tend to enter the shelter system as a whole family with their young children, indicating a concerning trend of homelessness among refugee families with children, while the non-refugees dominate the older age groups. 
 
-## Gender Composition Across Homeless Population Groups
+## Composition of Users for Active Shelters and Overnight Services
  
 ```{r, fig.width=10, fig.height=6}
 #| label: fig-thr
-#| fig-cap: Trends in Gender Composition of Homeless Population Across Different Population Groups within the Toronto Shelter System between 2018 and 2023
+#| fig-cap: Changes in Composition of Users for Active Shelters and Overnight Services in Toronto between January 2021 to August 2024
 #| echo: false
 #| message: false
 
@@ -259,7 +259,7 @@ In summary, chronic individuals are prominent across age groups, highlighting ch
 fig_sector <- ggplot(cleaned_data_figthr, aes(x = interval, y = Total_SECTOR_SUM, group = SECTOR, color = SECTOR)) +
   geom_line(linewidth = 2.5) +  # Line thickness
   geom_point(size = 1) +   # Points on the line
-  labs(x = "Time Interval", y = "Total Sector Sum") +
+  labs(x = "Time Interval", y = "Counts") +
   theme_minimal() +
   theme(
     axis.text.x = element_text(size = 10, angle = 45, hjust = 1),  # Lean the x-axis text
@@ -281,13 +281,14 @@ However, within specific population groups, variations in gender composition eme
  
 Furthermore, the data reveal temporal fluctuations in the chronic population group, which demonstrates a consistent increase in count from 2018 to 2023. This upward trend suggests a growing number of individuals experiencing long-term homelessness.
 
+## Analysis of Occupancy and Capacity for Active Shelters and Overnight Services
 
-```{r, fig.width=10, fig.height=6}
+```{r, fig.width=10, fig.height=14}
 #| label: fig-fou
-#| fig-cap: Trends of Number of COVID-19 Cases Reported each Month Since 2020 January to 2024 Febuary
+#| fig-cap: Trends of Occupancy and Capacity for Active Shelters and Overnight Services in Toronto from January 2021 to August 2024
 #| echo: false
 #| message: false
-#| 
+
 #### generate the 4th graph ####
 
 # Reshape the bed data into a long format
@@ -298,7 +299,7 @@ cleaned_data_bed <- cleaned_data_figfou %>%
 # Create a bar chart for bed data
 fig_bed <- ggplot(cleaned_data_bed, aes(x = interval, y = Value, fill = Category)) +
   geom_bar(stat = "identity", position = "dodge") +
-  labs(x = "Time Interval", y = "Count", title = "Bed Funding and Occupancy Over Time") +
+  labs(x = "Time Interval", y = "Count") +
   theme_minimal() +
   theme(
     axis.text.x = element_text(size = 10, angle = 45, hjust = 1),
@@ -308,9 +309,6 @@ fig_bed <- ggplot(cleaned_data_bed, aes(x = interval, y = Value, fill = Category
     legend.text = element_text(size = 12),
     legend.title = element_text(size = 14)
   )
-
-# Display the bed chart
-fig_bed
 
 # Reshape the room data into a long format
 cleaned_data_room <- cleaned_data_figfou %>%
@@ -320,7 +318,7 @@ cleaned_data_room <- cleaned_data_figfou %>%
 # Create a bar chart for room data
 fig_room <- ggplot(cleaned_data_room, aes(x = interval, y = Value, fill = Category)) +
   geom_bar(stat = "identity", position = "dodge") +
-  labs(x = "Time Interval", y = "Count", title = "Room Funding and Occupancy Over Time") +
+  labs(x = "Time Interval", y = "Count") +
   theme_minimal() +
   theme(
     axis.text.x = element_text(size = 10, angle = 45, hjust = 1),
@@ -331,25 +329,14 @@ fig_room <- ggplot(cleaned_data_room, aes(x = interval, y = Value, fill = Catego
     legend.title = element_text(size = 14)
   )
 
-# Display the room chart
-fig_room
+# Combine the two figures vertically
+grid.arrange(fig_bed, fig_room, ncol = 1)
+
 
 
 ```
 
 Trends of the Number of COVID-19 Cases demonstrated in [@fig-fou] reveal several peaks in the surge of COVID-19 infections, including from September 2020 to January 2021, February to June 2021, and November 2021 to February 2022. Although there were a few minor increases in infection numbers thereafter, overall, the number of infections has been consistently decreasing from February 2022 to February 2024.
-
-### Summery 
-
-```{r}
-#| label: tbl-thr
-#| tbl-cap: Summary of Statistical Coefficients for the Linear Models Across different Age Groups
-#| echo: false
-
-
-```
-
-The summary statistics for the six linear regression models were shown in [@tbl-thr].  The model for the age group under 16 demonstrates a relatively low R-squared value of 0.25, suggesting that only 25% of the variability in the number of homeless individuals is explained by the predictor variables, coupled with a high F-value of 11.96, indicating a potential lack of statistical significance. Similarly, the models for age groups 16-24, 25-44, and over 65 exhibit low R-squared values ranging from 0.003 to 0.10, with corresponding F-values suggesting limited explanatory power and statistical significance. Since all R square values were far from 1, this indicates the reliability of this model is limited. For the "under16" model, the standard error is relatively high, suggesting variability in the estimated coefficients and potentially lower precision in predicting the relationship between COVID-19 cases and homeless individuals under 16 years old. The t-value is also negative, indicating that the coefficient may not be statistically significant. Similarly, for the "16to24" and "25to44" models, the standard errors are relatively high, indicating variability in the estimates and potentially lower precision in predicting the relationship between COVID-19 cases and homeless individuals in these age groups. However, the t-values are negative for these models as well, suggesting that the coefficients may not be statistically significant. In contrast, for the "over65" model, the standard error is relatively low, suggesting higher precision in estimating the coefficients, but the t-value is also negative, indicating potential insignificance. Finally, for the "all population" model, the standard error is moderate, suggesting moderate variability in the estimates, and the t-value is negative, indicating potential insignificance. These findings show there's space for further improvement in these models.
 
 
 # Discussion
